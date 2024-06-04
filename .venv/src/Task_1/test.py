@@ -1,0 +1,8 @@
+from eight_queens_problem import EightQueensProblem
+
+a = EightQueensProblem([(6, 1), (1, 2), (2, 3), (4, 5), (6, 7), (5, 3), (1, 8), (3, 8)])
+
+a.print()
+#just a comment
+print("xyz")
+print(a.h())
