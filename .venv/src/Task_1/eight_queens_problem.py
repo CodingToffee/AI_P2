@@ -2,6 +2,7 @@ import random
 import time
 
 
+
 class EightQueensProblem:
     def __init__(self, transition_model, initial_state: [int] = None):
         self.initial_state: [int] = initial_state or [random.randint(0, 7) for i in range(8)]
@@ -9,11 +10,17 @@ class EightQueensProblem:
         self.transition_model = transition_model
         if transition_model == "genetic":
             self.genetic_algorithm([self.generate_random_individual() for i in range(20)])
+        if transition_model == "backtracking":
+            self.backtracking_algorithm([-1]*8, 0)
 
     def heuristic(self, state):
         attacks = 0
         for i in range(8):
+            if state[i] == -1:
+                continue
             for j in range(i + 1, 8):
+                if state[j] == -1:
+                    continue
                 if state[i] == state[j] or \
                         state[i] - i == state[j] - j or \
                         state[i] + i == state[j] + j:
@@ -82,7 +89,8 @@ class EightQueensProblem:
             # Print the best individual in the population based on the fitness function
             population_fitness = self.fitness_function(population)
             print(population_fitness)
-            individual_fittest, individual_fittest_fitness, individual_fittest_fitness_perc = max(population_fitness, key=lambda x: x[1])
+            individual_fittest, individual_fittest_fitness, individual_fittest_fitness_perc = max(population_fitness,
+                                                                                                  key=lambda x: x[1])
             print(f"Generation {j}: {individual_fittest} - : {individual_fittest_fitness}")
             # wait 2 seconds
             #time.sleep(2)
@@ -90,8 +98,6 @@ class EightQueensProblem:
                 break
 
         return individual_fittest
-
-
 
     def fitness_function(self, population):
         # Calculate the Fitness of each individual
@@ -131,3 +137,25 @@ class EightQueensProblem:
             new_individual = [random.randint(0, 7) for i in range(8)]
             if new_individual not in existing_population:
                 return new_individual
+
+    def backtracking_algorithm(self,state, column):
+        #time.sleep(2)
+        print("Current State: ", state, column)
+        if column >= 8:
+            print("Column >= 8")
+            self.print_state(state)
+            return True
+        for i in range(8):
+            # set queen one row further
+            state[column] = i
+            # check if new state is safe
+            if self.heuristic(state) == 0:
+                if self.backtracking_algorithm(state, column + 1):
+                    return True
+                else:
+                    #print("State after return: ", state)
+                    state[column + 1] = -1
+        return False
+
+    def is_safe(self, row, column):
+        pass
