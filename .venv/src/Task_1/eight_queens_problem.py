@@ -76,8 +76,7 @@ class EightQueensProblem:
             new_population = []
 
             for i in range(len(population)):
-                x = self.random_selection(population)
-                y = self.random_selection(population)
+                x, y = self.random_selection(population)
                 child = self.reproduce(x, y)
                 # Mutate child with 1-5% probability
                 if random.random() < random.uniform(0.01, 0.1):
@@ -108,20 +107,16 @@ class EightQueensProblem:
         return [(individual, fitness, fitness / total_fitness) for individual, fitness in fitnesses]
 
     def random_selection(self, population):
-        probabilities = self.fitness_function(population)
-        r = random.random()
-        #print("r: ", r)
-        sum_probabilities = 0
-        # Iterate over the individuals and their probabilities
-        for individual, fitness, probability in probabilities:
-            sum_probabilities += probability
-            #print("sum_probabilities: ", sum_probabilities)
-            # If the sum of probabilities is greater than or equal to the random number, return the current individual
-            if sum_probabilities >= r:
-                return individual
+        fitness = self.fitness_function(population)
+        # fitness / probability
+        probabilities = [probability for individual, fitness, probability in fitness]
 
-        # If no individual is selected (due to floating point precision issues), return the last individual
-        return population[-1]
+        x, y = None, None
+        while x == y:
+            x = random.choices(population, weights=probabilities)[0]
+            y = random.choices(population, weights=probabilities)[0]
+
+        return x, y
 
     def reproduce(self, x, y):
         n = len(x)
@@ -130,7 +125,7 @@ class EightQueensProblem:
         return child
 
     def generate_random_individual(self):
-        return [random.randint(0, 7) for i in range(8)]
+        return random.sample(range(8), 8)
 
     def generate_unique_individual(self, existing_population):
         while True:
@@ -139,7 +134,7 @@ class EightQueensProblem:
                 return new_individual
 
     def backtracking_algorithm(self,state, column):
-        #time.sleep(2)
+        time.sleep(1)
         print("Current State: ", state, column)
         if column >= 8:
             print("Column >= 8")
@@ -156,6 +151,3 @@ class EightQueensProblem:
                     #print("State after return: ", state)
                     state[column + 1] = -1
         return False
-
-    def is_safe(self, row, column):
-        pass
